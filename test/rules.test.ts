@@ -109,8 +109,17 @@ describe("serializer", () => {
     for (const status of ["open", "accepted", "staged", "delivered"] as const) {
       expect(serializeMemberItem(session("admin"), { ...item, status })?.status).toBe(status);
     }
+    expect(serializeMemberItem(session("admin"), item)).not.toHaveProperty("acceptedFor");
+    const acceptedItem: RawItem = {
+      ...item,
+      status: "delivered",
+      wishes: [{ email: "ada@example.com", name: "Ada Family", status: "accepted", kind: "now" }],
+    };
+    expect(serializeMemberItem(session("admin"), acceptedItem)?.acceptedFor).toBe("Ada Family");
     expect(serializeMemberItem(session("family"), item)).not.toHaveProperty("status");
+    expect(serializeMemberItem(session("family"), item)).not.toHaveProperty("acceptedFor");
     expect(serializeMemberItem(friend, item)).not.toHaveProperty("status");
+    expect(serializeMemberItem(friend, item)).not.toHaveProperty("acceptedFor");
   });
 });
 

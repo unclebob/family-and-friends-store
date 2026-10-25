@@ -22,6 +22,7 @@ type Item = {
   othersWishing?: number;
   activeWishes?: { id: number; name: string; kind: WishKind }[];
   status?: string;
+  acceptedFor?: string;
   photos: { id: number; url: string }[];
 };
 type EmailReply = { ok: boolean; signedIn?: boolean; message?: string; devCode?: string; masked?: string; pending?: string };
@@ -493,6 +494,7 @@ function CatalogItem({ item, me, setItems, reload }: {
     <article className="item" id={`item-${item.id}`}>
       <Photos photos={item.photos} />
       <h2>{item.title}</h2>
+      <ItemStatus item={item} />
       <p>{item.description}</p>
       <Price cents={item.priceCents} />
       <AlsoWanted me={me} item={item} />
@@ -522,8 +524,23 @@ function AdminWishes({ me, item, reload }: { me: Me; item: Item; reload: () => P
 
 // Friends tick a box; family and admins choose now or someday,
 // and pressing the chosen one again withdraws the wish.
+function ItemStatus({ item }: { item: Item }) {
+  if (!closedStatus(item.status)) return null;
+  return <p className="muted">{statusLine(item.status, item.acceptedFor)}</p>;
+}
+
+function closedStatus(status: string | undefined): status is string {
+  return status !== undefined && status !== "open";
+}
+
+function statusLine(status: string, acceptedFor: string | undefined): string {
+  if (!acceptedFor) return status;
+  return `${status} · ${acceptedFor}`;
+}
+
 function WishControl({ me, item, setItems }: { me: Me; item: Item; setItems: SetItems }) {
   const [ack, showAck] = useAck();
+  if (closedStatus(item.status)) return null;
   const friend = me.group === "friend";
   const wish = (change: WishChange) => {
     void sendWish(item, change, setItems).then((ok) => {

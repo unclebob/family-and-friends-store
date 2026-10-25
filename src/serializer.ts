@@ -36,6 +36,7 @@ export type MemberItem = {
   othersWishing?: number;
   activeWishes?: { id: number; name: string; kind: WishKind }[];
   status?: ItemStatus;
+  acceptedFor?: string;
 };
 
 function photoUrl(id: number): string {
@@ -89,7 +90,13 @@ function addWishers(viewer: Session, item: RawItem, view: MemberItem): void {
   if (viewer.group === "admin") {
     view.activeWishes = activeWishes(item.wishes);
     view.status = item.status;
+    addAcceptedFor(item.wishes, view);
   }
+}
+
+function addAcceptedFor(wishes: RawWish[], view: MemberItem): void {
+  const accepted = wishes.find((wish) => wish.status === "accepted");
+  if (accepted) view.acceptedFor = accepted.name;
 }
 
 function activeWishes(wishes: RawWish[]): { id: number; name: string; kind: WishKind }[] {

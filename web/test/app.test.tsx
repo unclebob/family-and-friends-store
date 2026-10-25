@@ -546,8 +546,8 @@ const threeItems = () => browsing({ "GET /api/items?topic=pins%20%26%20mugs": { 
 const titles = () => [...document.querySelectorAll("article h2, article h3")].map((h) => h.textContent);
 
 test("an admin browsing can filter items by active wishes or item state", async () => {
-  const acceptedVase = { ...plate, id: 4, title: "Vase", status: "accepted" };
-  const stagedBowl = { ...plate, id: 5, title: "Bowl", status: "staged" };
+  const acceptedVase = { ...plate, id: 4, title: "Vase", status: "accepted", acceptedFor: "Ada Family" };
+  const stagedBowl = { ...plate, id: 5, title: "Bowl", status: "staged", acceptedFor: "Bea Friend" };
   const deliveredCup = { ...plate, id: 6, title: "Cup", status: "delivered" };
   serve(
     { body: bob },
@@ -570,6 +570,11 @@ test("an admin browsing can filter items by active wishes or item state", async 
   ]);
   expect(show.value).toBe("all");
   expect(titles()).toEqual(["Brass pin", "Mug", "Plate", "Vase", "Bowl", "Cup"]);
+  expect(screen.getByText("accepted · Ada Family")).toBeTruthy();
+  expect(screen.getByText("staged · Bea Friend")).toBeTruthy();
+  expect(screen.getByText("delivered")).toBeTruthy();
+  expect(screen.getAllByText("Want it now")).toHaveLength(3);
+  expect(screen.getAllByText("Someday")).toHaveLength(3);
   for (const [choice, expected] of [
     ["wished", ["Brass pin", "Mug"]],
     ["open", ["Brass pin", "Mug", "Plate"]],
