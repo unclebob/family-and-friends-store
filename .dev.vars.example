@@ -1,0 +1,4 @@
+ENV=dev
+MERIT_SECRET=dev-merit-secret
+CODE_PEPPER=dev-code-pepper
+RESEND_API_KEY=test-resend-key

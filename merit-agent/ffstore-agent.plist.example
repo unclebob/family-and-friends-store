@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>org.example.ffstore-agent</string>
+  <key>LimitLoadToSessionType</key>
+  <string>Aqua</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>--experimental-strip-types</string>
+    <string>/Users/example/projects/family-and-friends-store/merit-agent/agent.mjs</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/example/projects/family-and-friends-store</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>FFSTORE_HOME</key>
+    <string>/Users/example/ffstore</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/example/Library/Logs/ffstore-agent.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/example/Library/Logs/ffstore-agent.log</string>
+</dict>
+</plist>

@@ -1,0 +1,127 @@
+:root {
+  color: #241c16;
+  background: #f3ecdf;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 21px;
+  line-height: 1.45;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; }
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button, .linkish {
+  min-height: 3rem;
+  border-radius: 999px;
+  border: 0;
+  padding: 0.55rem 1.1rem;
+  background: #7d3b32;
+  color: #fffaf3;
+  cursor: pointer;
+}
+
+button:disabled {
+  -webkit-appearance: none;
+  appearance: none;
+  opacity: 0.5;
+  cursor: default;
+}
+
+button.quiet, a.quiet {
+  background: transparent;
+  color: #7d3b32;
+}
+
+a { color: #7d3b32; }
+
+.page {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+h1 { font-size: 2rem; line-height: 1.15; margin: 0.2rem 0; }
+h2 { font-size: 1.5rem; margin: 0 0 0.6rem; }
+
+.card, .item {
+  background: #fffaf3;
+  border: 1px solid #e3d5c3;
+  border-radius: 1.1rem;
+  padding: 1rem;
+  margin: 0.8rem 0;
+}
+
+label { display: block; margin: 0.8rem 0; }
+input[type="email"], input[type="text"], input[type="number"], textarea, select {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.8rem;
+  border: 1px solid #cbbba6;
+  background: white;
+}
+
+.tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tabs button { background: #efe4d4; color: #241c16; }
+.tabs button.on { background: #7d3b32; color: white; }
+
+.item img {
+  width: 100%;
+  border-radius: 0.8rem;
+  background: #efe4d4;
+}
+
+.wish {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.2rem;
+  margin-top: 0.8rem;
+}
+
+.wish input { width: 1.6rem; height: 1.6rem; }
+
+.price { font-weight: 700; }
+.muted { color: #6d5e51; }
+.note {
+  background: #fff4cc;
+  border-radius: 0.8rem;
+  padding: 0.8rem 1rem;
+}
+.error { color: #8d1d1d; }
+
+.parts { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 0.6rem 0 1rem; }
+.parts a {
+  text-decoration: none;
+  background: #efe4d4;
+  color: #241c16;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+}
+.parts a.on { background: #7d3b32; color: white; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+}

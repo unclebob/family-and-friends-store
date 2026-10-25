@@ -1,0 +1,4 @@
+#!/bin/sh
+# Adds and edits items on the mementos site. See scripts/ffstore-item.md.
+here="$(cd "$(dirname "$0")" && pwd)"
+exec "$here/../node_modules/.bin/tsx" "$here/item-tool/cli.ts" "$@"

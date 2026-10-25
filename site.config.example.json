@@ -1,0 +1,21 @@
+{
+  "domain": "example.org",
+  "d1DatabaseId": "00000000-0000-0000-0000-000000000000",
+  "mailFrom": "Family & Friends <noreply@example.org>",
+  "reportTo": "admin@example.com,second@example.com",
+  "familyReplyTo": "admin@example.com",
+  "admins": [
+    { "email": "admin@example.com", "name": "First Admin", "shortName": "First" },
+    { "email": "second@example.com", "name": "Second Admin", "shortName": "Second" }
+  ],
+  "merit": {
+    "wsUrl": "wss://family.example.org/merit/ws",
+    "carddavUser": "admin@example.com",
+    "carddavKeychainService": "ffstore-carddav",
+    "linkKeychainService": "ffstore-link",
+    "plistLabel": "org.example.ffstore-agent",
+    "repoDir": "/Users/example/projects/family-and-friends-store",
+    "ffstoreHome": "/Users/example/ffstore",
+    "logPath": "/Users/example/Library/Logs/ffstore-agent.log"
+  }
+}

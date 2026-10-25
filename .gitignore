@@ -1,0 +1,16 @@
+node_modules/
+.wrangler/
+web/dist/
+worker-configuration.d.ts
+.metrics/
+target/
+__pycache__/
+*.pyc
+.dev.vars
+*.log
+.DS_Store
+.venv/
+backups/
+site.config.json
+wrangler.jsonc
+merit-agent/*.plist

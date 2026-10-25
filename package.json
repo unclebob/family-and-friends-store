@@ -1,0 +1,25 @@
+{
+  "name": "family-and-friends-store",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --local --port 8787",
+    "build": "vite build --config web/vite.config.ts",
+    "test": "vitest run",
+    "test:agent": "vitest run --project agent && merit-agent/.venv/bin/python -m unittest discover -s merit-agent",
+    "types": "wrangler types"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.4.6",
+    "@preact/preset-vite": "^2.10.6",
+    "@testing-library/preact": "^3.2.4",
+    "@types/node": "^26.6.5",
+    "happy-dom": "^21.0.4",
+    "preact": "^11.0.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5",
+    "wrangler": "^4.151.3"
+  }
+}

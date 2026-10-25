@@ -1,0 +1,6 @@
+# Tooling only: marks merit-agent as the Python root so coverage runs here with merit-agent/.venv.
+# Merit runs carddav.py with its system python3 and needs nothing from this file.
+[project]
+name = "ffstore-merit-agent"
+version = "0.0.0"
+requires-python = ">=3.9"

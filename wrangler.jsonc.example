@@ -1,0 +1,65 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "family-and-friends-store",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "routes": [
+    { "pattern": "family.example.org", "custom_domain": true },
+    { "pattern": "friends.example.org", "custom_domain": true }
+  ],
+  "vars": {
+    "ENV": "production",
+    "MAIL_FROM": "Family & Friends <noreply@example.org>",
+    // Who gets the daily wish report, comma separated.
+    "REPORT_TO": "admin@example.com,second@example.com",
+    // Replies to the family new-items email go here.
+    "FAMILY_REPLY_TO": "admin@example.com",
+    // TEMPORARY test bypass, remove. "on" lets <name>@familytest and <name>@friendtest sign in with no code.
+    "TEST_LOGINS": "off"
+  },
+  // Crons run in UTC. 12:00 UTC is the wish report to admins (7:00 AM CDT,
+  // 6:00 AM CST); 13:00 UTC is the new-items email to family (8:00 AM CDT,
+  // 7:00 AM CST). Both cover the previous Central day.
+  "triggers": { "crons": ["0 12 * * *", "0 13 * * *"] },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ffstore",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PHOTOS",
+      "bucket_name": "ffstore-photos"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MERIT",
+        "class_name": "MeritLink"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["MeritLink"]
+    }
+  ],
+  "assets": {
+    "directory": "./web/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // Every request goes through the Worker so plain http gets sent to https.
+    "run_worker_first": true
+  }
+}
