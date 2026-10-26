@@ -87,6 +87,24 @@ describe("accept", () => {
       headers: authed(await login("friends", "bea@example.com")),
     });
     expect(gone.status).toBe(404);
+    const statuses = await env.DB.prepare("SELECT email, status FROM wishes WHERE item_id = ? ORDER BY id").bind(itemId).all<{
+      email: string;
+      status: string;
+    }>();
+    expect(statuses.results).toEqual([
+      { email: "ada@example.com", status: "declined" },
+      { email: "bea@example.com", status: "accepted" },
+      { email: SECOND_ADMIN.email, status: "withdrawn" },
+    ]);
+    const adminView = await asJson(await exports.default.fetch(`${origin("family")}/api/items/${itemId}`, { headers: authed(admin) }));
+    expect(adminView.item).toMatchObject({ status: "accepted", acceptedFor: "Bea Friend", activeWishes: [] });
+    const adminItems = (await asJson(await exports.default.fetch(`${origin("family")}/api/admin/items`, { headers: authed(admin) }))) as {
+      items: { id: number; wishes: { email: string; status: string }[] }[];
+    };
+    expect(adminItems.items.find((i) => i.id === itemId)?.wishes.map((w) => [w.email, w.status])).toEqual([
+      ["ada@example.com", "declined"],
+      ["bea@example.com", "accepted"],
+    ]);
   });
 
   it("fails an uncheck after accept and keeps the row accepted", async () => {
@@ -269,6 +287,8 @@ describe("accept", () => {
     expect((await outbox()).results).toEqual([]);
     const item = await env.DB.prepare("SELECT status FROM items WHERE id = ?").bind(itemId).first<{ status: string }>();
     expect(item?.status).toBe("open");
+    const active = await env.DB.prepare("SELECT email FROM wishes WHERE item_id = ? AND status = 'active' ORDER BY id").bind(itemId).all<{ email: string }>();
+    expect(active.results.map((r) => r.email)).toEqual(["ada@example.com", "bea@example.com"]);
   });
 
   it("refuses a second accept on an item that is already accepted", async () => {

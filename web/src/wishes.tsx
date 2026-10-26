@@ -19,7 +19,7 @@ type WishRow = {
   acceptedAt: string | null;
 };
 
-const STATUSES = [["", "All"], ["active", "Active"], ["accepted", "Accepted"], ["staged", "Staged"], ["delivered", "Delivered"], ["withdrawn", "Withdrawn"]];
+const STATUSES = [["", "All"], ["active", "Active"], ["accepted", "Accepted"], ["staged", "Staged"], ["delivered", "Delivered"], ["declined", "Declined"], ["withdrawn", "Withdrawn"]];
 const SORTS = [["created", "Newest"], ["wisher", "Wisher"], ["item", "Item"], ["status", "Status"]];
 
 export function AllWishes() {

@@ -46,6 +46,7 @@ test("filtering and sorting reload the list and the CSV link", async () => {
     ["accepted", "Accepted"],
     ["staged", "Staged"],
     ["delivered", "Delivered"],
+    ["declined", "Declined"],
     ["withdrawn", "Withdrawn"],
   ]);
   expect([...(screen.getByLabelText("Sort by") as HTMLSelectElement).options].map((o) => o.value)).toEqual(["created", "wisher", "item", "status"]);

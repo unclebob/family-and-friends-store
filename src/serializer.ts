@@ -1,7 +1,7 @@
 import { canSeeOtherWishers, canSeePrice, canSeeTopic, type Session } from "./visibility";
 
 export type ItemStatus = "open" | "accepted" | "staged" | "delivered";
-export type WishStatus = "active" | "withdrawn" | "accepted";
+export type WishStatus = "active" | "withdrawn" | "accepted" | "declined";
 export type WishKind = "now" | "someday";
 
 export type RawWish = {

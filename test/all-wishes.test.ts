@@ -116,13 +116,16 @@ describe("all wishes", () => {
     for (const lead of ["=", "+", "-", "@"]) expect(csvField(`${lead}1`)).toBe(`'${lead}1`);
   });
 
-  it("shows a real accept with its accepted time", async () => {
+  it("shows a real accept with its accepted time and marks losing wishes declined", async () => {
     const other = await newItem("Mug", "Jewelry");
     await setWish(env.DB, ada, other, true, Date.parse("2026-10-20T15:00:00Z"));
-    const row = await env.DB.prepare("SELECT id FROM wishes WHERE item_id = ?").bind(other).first<{ id: number }>();
+    await setWish(env.DB, fran, other, true, Date.parse("2026-10-20T16:00:00Z"));
+    const row = await env.DB.prepare("SELECT id FROM wishes WHERE item_id = ? AND email = ?").bind(other, ada.email).first<{ id: number }>();
     await acceptWish(env, FIRST_ADMIN.email, other, row!.id, Date.parse("2026-10-21T14:00:00Z"));
     const mug = (await list("?status=accepted")).wishes.find((w) => w.itemTitle === "Mug");
     expect(mug?.acceptedAt).toBe("2026-10-21T09:00:00");
+    const declined = (await list("?status=declined")).wishes;
+    expect(declined).toMatchObject([{ name: "Fran Friend", itemTitle: "Mug", status: "declined", acceptedAt: null }]);
   });
 
   it("moves an accepted wish through staged and delivered, and filters each separately", async () => {

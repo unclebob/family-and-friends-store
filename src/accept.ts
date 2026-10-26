@@ -108,6 +108,12 @@ function acceptStatements(env: Env, adminEmail: string, item: ItemRecord, wish: 
        )`,
     ).bind(stamp, wish.id, item.id, wish.email),
     env.DB.prepare("SELECT email, name, grp FROM wishes WHERE item_id = ? AND status = 'active'").bind(item.id),
+    env.DB.prepare(
+      `UPDATE wishes SET status = 'declined', updated_at = ?
+       WHERE item_id = ? AND status = 'active' AND EXISTS (
+         SELECT 1 FROM items WHERE id = ? AND status = 'accepted' AND assigned_to = ?
+       )`,
+    ).bind(stamp, item.id, item.id, wish.email),
   ];
 }
 

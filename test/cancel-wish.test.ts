@@ -86,7 +86,7 @@ describe("an admin cancels a wish", () => {
     const ada = await cancel(admin, await idOf("ada@example.com"));
     expect(ada.status).toBe(409);
     expect(await asJson(ada)).toEqual({ error: "That wish can no longer be cancelled." });
-    expect(await row(await idOf("ada@example.com"))).toEqual({ status: "active", cancelled_by: null });
+    expect(await row(await idOf("ada@example.com"))).toEqual({ status: "declined", cancelled_by: null });
     expect(await cancelMail()).toEqual([]);
   });
 

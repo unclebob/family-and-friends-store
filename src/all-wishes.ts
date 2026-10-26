@@ -31,7 +31,7 @@ type StoredRow = {
   accepted_at: string | null;
 };
 
-const STATUSES = ["active", "accepted", "staged", "delivered", "withdrawn"];
+const STATUSES = ["active", "accepted", "staged", "delivered", "declined", "withdrawn"];
 const WISH_STATUS = "CASE WHEN w.status = 'accepted' AND i.status IN ('staged', 'delivered') THEN i.status ELSE w.status END";
 // Column names are fixed here, never taken from the request.
 const ORDERS: Record<string, string> = {

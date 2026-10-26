@@ -64,8 +64,10 @@ function asStatus(value: string): ItemStatus {
   return ITEM_STATUSES[value] ?? "open";
 }
 
+const WISH_STATUSES: string[] = ["active", "withdrawn", "accepted", "declined"];
+
 function asWishStatus(value: string): WishStatus | null {
-  if (value === "active" || value === "withdrawn" || value === "accepted") return value;
+  if (WISH_STATUSES.includes(value)) return value as WishStatus;
   return null;
 }
 
