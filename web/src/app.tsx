@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import { MoveTopic, type MoveOption } from "./move-topic";
 import { matchesShow, ShowFilter, type Show } from "./show-filter";
 import { cancelWish } from "./wish-actions";
 import { Admin } from "./admin";
@@ -7,7 +8,7 @@ import { Note } from "./note";
 import { api, firstField, listOrEmpty, money, textOr } from "./api";
 
 type Me = { email: string; firstName: string; group: "admin" | "family" | "friend" };
-type Topic = { slug: string; name: string; available?: number };
+type Topic = { id: number; slug: string; name: string; available?: number };
 type WishKind = "now" | "someday";
 type WishChange = { wished: boolean; kind?: WishKind };
 type SetItems = (update: (current: Item[]) => Item[]) => void;
@@ -382,7 +383,7 @@ function Browser({ me }: { me: Me }) {
       <AdminShow me={me} show={show} setShow={setShow} />
       <EmptyItems slug={slug} items={items} />
       {items.filter((item) => shownTo(item, show)).map((item) => (
-        <CatalogItem key={item.id} item={item} me={me} setItems={setItems} reload={() => loadItems(slug, setItems)} />
+        <CatalogItem key={item.id} item={item} me={me} topics={topics.filter((topic) => topic.slug !== slug)} setItems={setItems} reload={() => loadItems(slug, setItems)} />
       ))}
     </section>
   );
@@ -484,9 +485,10 @@ function showEmptyItems(slug: string, items: Item[]): boolean {
   return items.length === 0;
 }
 
-function CatalogItem({ item, me, setItems, reload }: {
+function CatalogItem({ item, me, topics, setItems, reload }: {
   item: Item;
   me: Me;
+  topics: MoveOption[];
   setItems: (update: (current: Item[]) => Item[]) => void;
   reload: () => Promise<void>;
 }) {
@@ -500,17 +502,18 @@ function CatalogItem({ item, me, setItems, reload }: {
       <AlsoWanted me={me} item={item} />
       <OthersWishing count={item.othersWishing} />
       <WishControl me={me} item={item} setItems={setItems} />
-      <AdminWishes me={me} item={item} reload={reload} />
+      <AdminWishes me={me} item={item} topics={topics} reload={reload} />
     </article>
   );
 }
 
 // Admins can cancel any active wish from here, their own included.
-function AdminWishes({ me, item, reload }: { me: Me; item: Item; reload: () => Promise<void> }) {
+function AdminWishes({ me, item, topics, reload }: { me: Me; item: Item; topics: MoveOption[]; reload: () => Promise<void> }) {
   const [message, setMessage] = useState("");
   if (me.group !== "admin") return null;
   return (
     <>
+      <MoveTopic itemId={item.id} topics={topics} say={setMessage} reload={reload} />
       {listOrEmpty(item.activeWishes).map((wish) => (
         <p key={wish.id}>
           {wish.kind === "someday" ? `${wish.name} (someday)` : wish.name}

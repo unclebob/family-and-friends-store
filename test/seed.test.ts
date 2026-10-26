@@ -40,7 +40,7 @@ describe("catalog seed", () => {
     const before = await asJson(
       await exports.default.fetch(`${origin("family")}/api/topics`, { headers: authed(family) }),
     );
-    expect(before.topics).toEqual(topics.map(({ slug, name }) => ({ slug, name, available: 0 })));
+    expect(before.topics).toEqual(topics.map(({ slug, name, sort_order }) => ({ id: sort_order, slug, name, available: 0 })));
     const stored = await asJson(
       await exports.default.fetch(`${origin("family")}/api/admin/topics`, { headers: authed(admin) }),
     );
@@ -69,7 +69,7 @@ describe("catalog seed", () => {
       await exports.default.fetch(`${origin("family")}/api/topics`, { headers: authed(family) }),
     );
     expect(again.topics).toEqual(
-      topics.map(({ slug, name }) => ({ slug, name, available: slug === "aviation" || slug === "jewelry" ? 1 : 0 })),
+      topics.map(({ slug, name, sort_order }) => ({ id: sort_order, slug, name, available: slug === "aviation" || slug === "jewelry" ? 1 : 0 })),
     );
   });
 

@@ -38,7 +38,7 @@ export async function getTopics(env: Env, session: Session): Promise<Response> {
   return json({
     topics: topics
       .filter((topic) => canSeeTopic(session, topic.slug))
-      .map((topic) => ({ slug: topic.slug, name: topic.name, available: available.get(topic.slug) ?? 0 })),
+      .map((topic) => ({ id: topic.id, slug: topic.slug, name: topic.name, available: available.get(topic.slug) ?? 0 })),
   });
 }
 

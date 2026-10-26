@@ -28,7 +28,7 @@ function serve(me: Route, more: Record<string, Route> = {}, env = "production") 
 
 function browsing(more: Record<string, Route> = {}) {
   return {
-    "GET /api/topics": { body: { topics: [{ slug: "pins & mugs", name: "Pins" }, { slug: "art", name: "Art" }] } },
+    "GET /api/topics": { body: { topics: [{ id: 3, slug: "pins & mugs", name: "Pins" }, { id: 4, slug: "art", name: "Art" }] } },
     "GET /api/items?topic=pins%20%26%20mugs": { body: { items: [pin, mug] } },
     "GET /api/items?topic=art": { body: { items: [] } },
     ...more,
@@ -640,6 +640,7 @@ test.each([["family", ada], ["friend", fran]])("%s browsing never sees Cancel wi
   render(<App />);
   await screen.findByText("Plate");
   expect(screen.queryByText("Cancel wish")).toBeNull();
+  expect(screen.queryByText("Move to")).toBeNull();
 });
 
 test("opening an #item-<id> link selects that item's topic and scrolls the item into view", async () => {
@@ -683,3 +684,15 @@ test.each(["/#item-99", "/#other-section"])(
     expect(scrolled).toEqual([]);
   },
 );
+
+test("an admin browsing can move a card to another topic and reload the topic list", async () => {
+  const server = serve({ body: bob }, wishedRoutes({ "PATCH /api/admin/items/1": { body: { ok: true } } }));
+  render(<App />);
+  await screen.findByText("Plate");
+  const selects = screen.getAllByLabelText("Move to topic") as HTMLSelectElement[];
+  expect([...selects[0].options].map((o) => [o.value, o.textContent])).toEqual([["4", "Art"]]);
+  fireEvent.click(screen.getAllByText("Move to")[0]);
+  expect(await screen.findByText("Item moved.")).toBeTruthy();
+  expect(server.sent("PATCH", "/api/admin/items/1")[0].body).toEqual({ topicId: 4 });
+  await waitFor(() => expect(server.sent("GET", "/api/items?topic=pins%20%26%20mugs")).toHaveLength(2));
+});

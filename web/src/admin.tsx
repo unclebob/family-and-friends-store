@@ -1,5 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
 import { api, firstField, listOrEmpty, money, shrinkPhoto } from "./api";
+import { MoveTopic } from "./move-topic";
 import { StatusButtons } from "./status-buttons";
 import { acceptWish, cancelWish } from "./wish-actions";
 import { Note } from "./note";
@@ -53,7 +54,7 @@ export function Admin() {
       />
       <ShowFilter show={show} setShow={setShow} />
       {items.filter((item) => shown(item, show)).map((item) => (
-        <AdminItem key={item.id} item={item} setMessage={setMessage} refresh={refresh} />
+        <AdminItem key={item.id} item={item} topics={topics.filter((topic) => topic.id !== item.topicId)} setMessage={setMessage} refresh={refresh} />
       ))}
     </section>
   );
@@ -218,8 +219,9 @@ function clearItem(
   setPrice("");
 }
 
-function AdminItem({ item, setMessage, refresh }: {
+function AdminItem({ item, topics, setMessage, refresh }: {
   item: Item;
+  topics: Topic[];
   setMessage: (message: string) => void;
   refresh: () => Promise<void>;
 }) {
@@ -232,6 +234,7 @@ function AdminItem({ item, setMessage, refresh }: {
       <Photos photos={item.photos} />
       <PhotoInput item={item} setMessage={setMessage} refresh={refresh} />
       <ActiveWishes item={item} setMessage={setMessage} refresh={refresh} />
+      <MoveTopic itemId={item.id} topics={topics} say={setMessage} reload={refresh} />
       <StatusButtons itemId={item.id} status={item.status} say={setMessage} reload={refresh} />
     </article>
   );

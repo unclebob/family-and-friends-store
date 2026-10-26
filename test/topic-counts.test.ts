@@ -51,7 +51,7 @@ describe("topic counts", () => {
     for (const topic of forFamily) expect(topic.available).toBe(await listed("family", family, topic.slug));
 
     const forFriend = await topics("friends", friend);
-    expect(forFriend).toEqual([{ slug: jewelry.slug, name: "Jewelry", available: 1 }]);
+    expect(forFriend).toEqual([{ id: jewelry.id, slug: jewelry.slug, name: "Jewelry", available: 1 }]);
     expect(await listed("friends", friend, jewelry.slug)).toBe(1);
   });
 });

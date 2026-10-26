@@ -1,5 +1,5 @@
-// Accept and Cancel wish, shared by the admin page, the All wishes list, and
-// an admin's view of the browsing page. Each asks first, then reloads.
+// Accept, Cancel wish, status changes, and Move to topic, shared by the admin
+// page, the All wishes list, and an admin's view of the browsing page.
 import { api, textOr } from "./api";
 
 type Say = (message: string) => void;
@@ -23,14 +23,30 @@ export async function cancelWish(wish: { id: number; name: string }, title: stri
 }
 
 export async function setItemStatus(itemId: number, status: DeliveryStatus, say: Say, reload: Reload): Promise<void> {
-  const result = await api<Reply>(`/api/admin/items/${itemId}/status`, { method: "POST", body: JSON.stringify({ status }) });
-  say(statusNote(result.body, status));
+  await sendItemWrite(`/api/admin/items/${itemId}/status`, "POST", { status }, `Marked ${status}.`, "Status change failed.", say, reload);
+}
+
+export async function moveItem(itemId: number, topicId: number, say: Say, reload: Reload): Promise<void> {
+  await sendItemWrite(`/api/admin/items/${itemId}`, "PATCH", { topicId }, "Item moved.", "Move failed.", say, reload);
+}
+
+async function sendItemWrite(
+  path: string,
+  method: "POST" | "PATCH",
+  payload: Record<string, unknown>,
+  ok: string,
+  fallback: string,
+  say: Say,
+  reload: Reload,
+): Promise<void> {
+  const result = await api<Reply>(path, { method, body: JSON.stringify(payload) });
+  say(replyNote(result.body, ok, fallback));
   await reload();
 }
 
-function statusNote(body: Reply, status: DeliveryStatus): string {
-  if (body.ok) return `Marked ${status}.`;
-  return textOr(body.error, "Status change failed.");
+function replyNote(body: Reply, ok: string, fallback: string): string {
+  if (body.ok) return ok;
+  return textOr(body.error, fallback);
 }
 
 function acceptNote(body: Reply): string {

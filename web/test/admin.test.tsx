@@ -307,3 +307,42 @@ test("admin cards for accepted, staged, and delivered items show status buttons 
   expect(await screen.findByText("Status change failed.")).toBeTruthy();
   expect(server.sent("POST", "/api/admin/items/9/status")[0].body).toEqual({ status: "staged" });
 });
+
+test("each card lets an admin move the item to another topic, hides Move to when no other topic exists, and reports errors", async () => {
+  const moreTopics = [...topics, { id: 5, slug: "books", name: "Books" }];
+  const server = serve(
+    {
+      "GET /api/admin/topics": { body: { topics: moreTopics } },
+      "PATCH /api/admin/items/1": { body: { ok: true } },
+      "PATCH /api/admin/items/2": { status: 404, body: { error: "Topic not found." } },
+    },
+    [pin, vase],
+  );
+  render(<Admin />);
+  await screen.findByText("Brass pin");
+  const selects = screen.getAllByLabelText("Move to topic") as HTMLSelectElement[];
+  expect([...selects[0].options].map((o) => [o.value, o.textContent])).toEqual([
+    ["4", "Art"],
+    ["5", "Books"],
+  ]);
+  fireEvent.click(screen.getAllByText("Move to")[0]);
+  expect(await screen.findByText("Item moved.")).toBeTruthy();
+  expect(server.sent("PATCH", "/api/admin/items/1")[0].body).toEqual({ topicId: 4 });
+  await waitFor(() => expect(loads(server)).toBe(2));
+
+  fireEvent.change(selects[0], { target: { value: "5" } });
+  fireEvent.click(screen.getAllByText("Move to")[0]);
+  await waitFor(() => expect(server.sent("PATCH", "/api/admin/items/1")[1].body).toEqual({ topicId: 5 }));
+
+  fireEvent.click(screen.getAllByText("Move to")[1]);
+  expect(await screen.findByText("Topic not found.")).toBeTruthy();
+  server.routes["PATCH /api/admin/items/2"] = { status: 500, body: {} };
+  fireEvent.click(screen.getAllByText("Move to")[1]);
+  expect(await screen.findByText("Move failed.")).toBeTruthy();
+
+  cleanup();
+  serve({ "GET /api/admin/topics": { body: { topics: [topics[0]] } } }, [pin]);
+  render(<Admin />);
+  await screen.findByText("Brass pin");
+  expect(screen.queryByText("Move to")).toBeNull();
+});
